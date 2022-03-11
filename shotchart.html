@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src='https://cdn.plot.ly/plotly-2.6.3.min.js'></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src='shotchart.js'></script>
+    <title>Document</title>
+</head>
+<body>
+    <div id='myDiv'><!-- Plotly chart will be drawn inside this DIV -->
+    <script>
+
+    fetchShots = async(id) => {
+        try {
+            const response = await fetch(`./shot_charts/${id}.json`, {
+                method: 'GET'
+            });
+            const data = await response.json()
+            return data;
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
+    renderShots = async() => {
+        const shots = await fetchShots(2021);
+        console.log(shots.data.shot_type)
+    }
+
+    renderShots(2021)
+
+
+    var bb_goal = {
+      x: [-18,125,-6,28,-83,-26,-10,3,-60,-26,-26,75,-2,8],
+      y: [495,274,412,477,376,484,484,480,430,492,461,500,451,452],
+      mode: 'markers',
+      type: 'scatter',
+      name: 'Goal',
+      text: [],
+      hoverinfo: 'x+y',
+      textposition: 'top center',
+      textfont: {
+        family:  'Raleway, sans-serif'
+      },
+      marker: { size: 15,
+                color:'#00B200',
+                symbol: 0
+      }
+    };    
+
+    var bb_shot = {
+      x: [-114,244,-57,-62,11,134,150,-219,-62,-12,-20,-19,127,119,58,-163,-70,-239,152,-42,-50,49,-84,-64,-128,26,18,114,-44,132,48,-180,15,60,95,112,-38,-37],
+      y: [394,370,421,261,469,448,390,268,502,209,471,365,402,365,407,455,396,375,425,318,302,292,300,450,429,482,500,302,490,460,485,210,488,301,160,445,479,352],
+      mode: 'markers',
+      type: 'scatter',
+      name: 'Shot',
+      text: [],
+      hoverinfo: 'x+y',
+      textfont : {
+        family:'Times New Roman'
+      },
+      textposition: 'bottom center',
+      marker: { size: 15,
+                color:'#d1d996',
+                symbol: 0,
+                opacity: 1
+      }
+    };
+
+    var bb_att = {
+      x: [13,76,70,129,115,101,-24,138,240,-48,51,-31,-47,38,20,-241],
+      y: [455,461,386,398,422,305,479,362,300,481,409,478,410,401,225,256],
+      mode: 'markers',
+      type: 'scatter',
+      name: 'Miss',
+      text: [],
+      hoverinfo: 'x+y',
+      textfont : {
+        family:'Times New Roman'
+      },
+      textposition: 'bottom center',
+      marker: { size: 12,
+                color:'#000000',
+                symbol: 0,
+                opacity: 0.75
+      }
+    };
+
+    var bb_block = {
+      x: [26,162,-245,-185,145],
+      y: [361,238,358,270,418],
+      mode: 'markers',
+      type: 'scatter',
+      name: 'Blocked',
+      text: [],
+      hoverinfo: 'x+y',
+      textfont : {
+        family:'Times New Roman'
+      },
+      textposition: 'bottom center',
+      marker: { size: 12,
+                color:'#000000',
+                symbol: 128,
+                opacity: 1
+      }
+    }; 
+      
+    var opp_goal = {
+      x: [49,0,-62,-15,51],
+      y: [438,430,406,509,508],
+      mode: 'markers',
+      type: 'scatter',
+      name: 'Opp Goal',
+      text: [],
+      hoverinfo: 'x+y',
+      textposition: 'top center',
+      textfont: {
+        family:  'Raleway, sans-serif'
+      },
+      marker: { size: 10,
+                color:'#A00000',
+                symbol: 2
+      }
+    };
+
+    var opp_shot = {
+      x: [-215,41,-4,-26,121,-240,71,137,134,-128,152,26,136,-69],
+      y: [371,408,391,399,210,481,442,450,298,489,378,431,396,311],
+      mode: 'markers',
+      type: 'scatter',
+      name: 'Opp Shot',
+      text: [],
+      hoverinfo: 'x+y',
+      textfont : {
+        family:'Times New Roman'
+      },
+      textposition: 'bottom center',
+      marker: { size: 10,
+                color:'#847272',
+                symbol: 2,
+                opacity: 0.75
+      }
+    };
+    
+    var opp_att = {
+      x: [133,-57,-80,100,-99,77,-64,-4,-109],
+      y: [252,300,444,319,200,502,402,381,450],
+      mode: 'markers',
+      type: 'scatter',
+      name: 'Opp Miss',
+      text: [],
+      hoverinfo: 'x+y',
+      textfont : {
+        family:'Times New Roman'
+      },
+      textposition: 'bottom center',
+      marker: { size: 8,
+                color:'#847272',
+                symbol: 102,
+                opacity: 0.75
+      }
+    };
+
+    var opp_block = {
+      x: [-35,-51,238],
+      y: [277,238,292],
+      mode: 'markers',
+      type: 'scatter',
+      name: 'Opp Blocked',
+      text: [],
+      hoverinfo: 'x+y',
+      textfont : {
+        family:'Times New Roman'
+      },
+      textposition: 'bottom center',
+      marker: { size: 8,
+                color:'brown',
+                symbol: 130,
+                opacity: 1
+      }      
+    };
+    
+    var data = [ bb_goal, bb_shot, bb_att, bb_block, opp_goal, opp_shot, opp_att, opp_block ];
+          
+        var layout = {
+        
+            // to highlight the timestamp we use shapes and create a rectangular
+        
+            shapes: [
+                // Rink Outline
+                {
+                     type: 'rect',
+                    // x-reference is assigned to the x-values
+                    xref: 'x',
+                    // y-reference is assigned to the plot paper [0,1]
+                    yref: 'y',
+                    x0: '-250',
+                    y0: '0',
+                    x1: '250',
+                    y1: '516.2',
+                    line: {
+                        width: 1
+                    }
+                },
+        
+                // Rink Edge Arcs
+                {
+                     type: 'path',
+                    // x-reference is assigned to the x-values
+                    xref: 'x',
+                    // y-reference is assigned to the plot paper [0,1]
+                    yref: 'y',
+                    path: 'M 200 580 C 217 574, 247 532, 250 516.2',
+                    line: {
+                        width: 1
+                    }
+                },
+                
+                {
+                     type: 'path',
+                    // x-reference is assigned to the x-values
+                    xref: 'x',
+                    // y-reference is assigned to the plot paper [0,1]
+                    yref: 'y',
+                    path: 'M -200 580 C -217 574, -247 532, -250 516.2',
+                    line: {
+                        width: 1
+                    }
+                },
+                
+                // Middle Line
+                
+                {
+                    type: 'line',
+                    xref: 'x',
+                    yref: 'y',
+                    x0: '200',
+                    y0: '580',
+                    x1: '-200',
+                    y1: '580',
+                    line: {
+                        width: 1
+                    }
+                },
+                
+                // Center Ice Line
+                {
+                    type: 'line',
+                    xref: 'x',
+                    yref: 'y',
+                    x0: '-250',
+                    y0: '0',
+                    x1: '250',
+                    y1: '0',
+                    line: {
+                        width: 3,
+                        color: 'rgba(255,0,0,1)'
+                    }
+                },
+                
+                // Goal Line
+                {
+                    type: 'line',
+                    xref: 'x',
+                    yref: 'y',
+                    x0: '-250',
+                    y0: '516.2',
+                    x1: '250',
+                    y1: '516.2',
+                    line: {
+                        width: 1,
+                        color: 'rgba(255,0,0,1)'
+                    }
+                },
+                
+                // Blue Line
+                {
+                    type: 'line',
+                    // x-reference is assigned to the x-values
+                    xref: 'x',
+                    // y-reference is assigned to the plot paper [0,1]
+                    yref: 'y',
+                    x0: '-250',
+                    y0: '150.8',
+                    x1: '250',
+                    y1: '150.8',
+                    line: {
+                        color: 'rgba(0,0,255,1)',
+                        width: 2
+                    } 
+                },
+                
+                // Center Ice dot
+                {
+                    type: 'circle',
+                    // x-reference is assigned to the x-values
+                    xref: 'x',
+                    // y-reference is assigned to the plot paper [0,1]
+                    yref: 'y',
+                    x0: '2.94',
+                    y0: '2.8',
+                    x1: '-2.94',
+                    y1: '2.94',
+                    line: {
+                        color: 'rgba(0,0,255,1)',
+                        width: 1,
+                        fillcolor: 'rgba(0,0,255,1)'
+                    } 
+                },  
+         
+                 // Scoring Area
+                // {
+                //     type: 'rect',
+                //     // x-reference is assigned to the x-values
+                //     xref: 'x',
+                //     // y-reference is assigned to the plot paper [0,1]
+                //     yref: 'y',
+                //     x0: '-120',
+                //     y0: '515',
+                //     x1: '125',
+                //     y1: '360',
+                //     line: {
+                //         color: '#008C00',
+                //         width: 2,
+                //         dash: 'dash'
+                //     } 
+        
+                // },  
+                
+                // offsidedot1
+                {
+                    type: 'circle',
+                    // x-reference is assigned to the x-values
+                    xref: 'x',
+                    // y-reference is assigned to the plot paper [0,1]
+                    yref: 'y',
+                    x0: '135.5',
+                    y0: '121.8',
+                    x1: '123.5',
+                    y1: '110.2',
+                    fillcolor: 'rgba(255,0,0,1)',
+                    line: {
+                        color: 'rgba(255,0,0,1)',
+                        width: 1,
+                        fillcolor: 'rgba(255,0,0,1)'
+                    } 
+                },
+                
+                // offsidedot2
+                {
+                    type: 'circle',
+                    // x-reference is assigned to the x-values
+                    xref: 'x',
+                    // y-reference is assigned to the plot paper [0,1]
+                    yref: 'y',
+                    x0: '-135.5',
+                    y0: '121.8',
+                    x1: '-123.5',
+                    y1: '110.2',
+                    fillcolor: 'rgba(255,0,0,1)',
+                    line: {
+                        color: 'rgba(255,0,0,1)',
+                        width: 1,
+                        fillcolor: 'rgba(255,0,0,1)'
+                    } 
+                },
+                 
+                // faceoffdot1
+                {
+                    type: 'circle',
+                    // x-reference is assigned to the x-values
+                    xref: 'x',
+                    // y-reference is assigned to the plot paper [0,1]
+                    yref: 'y',
+                    x0: '-135.5',
+                    y0: '405.8',
+                    x1: '-123.5',
+                    y1: '394.2',
+                    fillcolor: 'rgba(255,0,0,1)',
+                    line: {
+                        color: 'rgba(255,0,0,1)',
+                        width: 1,
+                        fillcolor: 'rgba(255,0,0,1)'
+                    } 
+                },
+                 
+                // faceoffdot2
+                {
+                    type: 'circle',
+                    // x-reference is assigned to the x-values
+                    xref: 'x',
+                    // y-reference is assigned to the plot paper [0,1]
+                    yref: 'y',
+                    x0: '135.5',
+                    y0: '405.8',
+                    x1: '123.5',
+                    y1: '394.2',
+                    fillcolor: 'rgba(255,0,0,1)',
+                    line: {
+                        color: 'rgba(255,0,0,1)',
+                        width: 1,
+                        fillcolor: 'rgba(255,0,0,1)'
+                    } 
+                },
+                        
+                // faceoffcircle1
+                {
+                    type: 'circle',
+                    // x-reference is assigned to the x-values
+                    xref: 'x',
+                    // y-reference is assigned to the plot paper [0,1]
+                    yref: 'y',
+                    x0: '217.6',
+                    y0: '487.2',
+                    x1: '41.2',
+                    y1: '313.2',
+                    line: {
+                        color: 'rgba(255,0,0,1)',
+                        width: 1,
+                    } 
+                },
+                
+                // faceoffcircle2
+                {
+                    type: 'circle',
+                    // x-reference is assigned to the x-values
+                    xref: 'x',
+                    // y-reference is assigned to the plot paper [0,1]
+                    yref: 'y',
+                    x0: '-217.6',
+                    y0: '487.2',
+                    x1: '-41.2',
+                    y1: '313.2',
+                    line: {
+                        color: 'rgba(255,0,0,1)',
+                        width: 1,
+                    } 
+                },
+              
+        
+                // Goal lines
+                {
+                    type: 'line',
+                    // x-reference is assigned to the x-values
+                    xref: 'x',
+                    // y-reference is assigned to the plot paper [0,1]
+                    yref: 'y',
+                    x0: '64.7',
+                    y0: '516.2',
+                    x1: '82.3',
+                    y1: '580',
+                    line: {
+                        width: 1,
+                    } 
+                },        
+                
+                {
+                    type: 'line',
+                    // x-reference is assigned to the x-values
+                    xref: 'x',
+                    // y-reference is assigned to the plot paper [0,1]
+                    yref: 'y',
+                    x0: '23.5',
+                    y0: '516.2',
+                    x1: '23.5',
+                    y1: '493',
+                    line: {
+                        width: 1,
+                    } 
+                },        
+        
+                {
+                    type: 'line',
+                    // x-reference is assigned to the x-values
+                    xref: 'x',
+                    // y-reference is assigned to the plot paper [0,1]
+                    yref: 'y',
+                    x0: '-64.7',
+                    y0: '516.2',
+                    x1: '-82.3',
+                    y1: '580',
+                    line: {
+                        width: 1,
+                    } 
+                },        
+                
+                {
+                    type: 'line',
+                    // x-reference is assigned to the x-values
+                    xref: 'x',
+                    // y-reference is assigned to the plot paper [0,1]
+                    yref: 'y',
+                    x0: '-23.5',
+                    y0: '516.2',
+                    x1: '-23.5',
+                    y1: '493',
+                    line: {
+                        width: 1,
+                    } 
+                },        
+        
+                // Crease
+                {
+                    type: 'path',
+                    // x-reference is assigned to the x-values
+                    xref: 'x',
+                    // y-reference is assigned to the plot paper [0,1]
+                    yref: 'y',
+                    path: 'M 23.5 493 C 20 480, -20 480, -23.5 493',
+                    line: {
+                        width: 1
+                    }
+                },
+                
+                {
+                     type: 'path',
+                    // x-reference is assigned to the x-values
+                    xref: 'x',
+                    // y-reference is assigned to the plot paper [0,1]
+                    yref: 'y',
+                    path: 'M 17.6 516.2 C 15 530, -15 530, -17.6 516.2',
+                    line: {
+                        width: 1
+                    }
+                },
+                                                                      
+        ],
+            height: 700,
+            width: 700
+        }
+        
+        Plotly.newPlot('myDiv', data, layout);
+    </script>
+    </div>
+</body>
+</html>
